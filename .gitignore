@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/dotenv,python,visualstudiocode,nextjs,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=dotenv,python,visualstudiocode,nextjs,react
 
+### Custom ###
+docs/origin_src/**.*
+
 ### dotenv ###
 .env
 
