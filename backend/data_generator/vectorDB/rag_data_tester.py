@@ -15,6 +15,9 @@ import logging
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root / "backend" / "data_generator" / "vectorDB"))
 
+# 환경 변수 로더 import
+from env_loader import ensure_env_loaded
+
 from langchain_community.vectorstores import FAISS
 
 # 임베딩 모델 import
@@ -148,6 +151,9 @@ def test_query(vector_store, query: str, k: int = 3) -> List[Dict[str, Any]]:
 
 def run_tests():
     """RAG 벡터 DB 테스트 실행"""
+    
+    # .zshrc에서 환경 변수 로드 시도
+    ensure_env_loaded()
     
     print("=" * 80)
     print("RAG 벡터 데이터베이스 테스트")
