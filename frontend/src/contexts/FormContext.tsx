@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import type { FinalReport } from "@/api/startup";
 
 interface FormData {
   // Step 1: Profile Info
@@ -44,6 +45,8 @@ interface FormContextType {
   updateFormData: (data: Partial<FormData>) => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
+  reportData: FinalReport | null;
+  setReportData: (data: FinalReport | null) => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -69,13 +72,14 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     visionText: "",
     businessGoals: [],
   });
+  const [reportData, setReportData] = useState<FinalReport | null>(null);
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
   return (
-    <FormContext.Provider value={{ formData, updateFormData, currentStep, setCurrentStep }}>
+    <FormContext.Provider value={{ formData, updateFormData, currentStep, setCurrentStep, reportData, setReportData }}>
       {children}
     </FormContext.Provider>
   );

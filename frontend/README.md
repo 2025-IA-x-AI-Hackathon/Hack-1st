@@ -60,6 +60,41 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Backend Integration
+
+This frontend connects to a FastAPI backend for AI-powered startup consulting.
+
+### Setup Backend Connection
+
+1. Create a `.env` file in the frontend directory:
+
+```bash
+# .env
+VITE_API_URL=http://localhost:8080
+```
+
+2. Start the backend server (see `backend/README.md`):
+
+```bash
+cd ../backend
+python run_server.py
+```
+
+3. The frontend will automatically connect to the backend API at the configured URL.
+
+### API Integration
+
+The frontend uses a centralized API client located at `src/api/startup.ts`:
+
+```typescript
+import { startupAPI } from "@/api/startup";
+
+// Submit startup plan
+const result = await startupAPI.submitStartupPlan(requestData);
+```
+
+For detailed API documentation, see `backend/API_INTEGRATION.md`.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/470b60e6-3cee-457c-8c2a-9f9adf288c07) and click on Share -> Publish.

@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { CheckCircle2, Edit2, X, Check } from "lucide-react";
 import jobCategories from "@/data/korean_job_categories_dataset.json";
 import { useToast } from "@/hooks/use-toast";
+import { startupAPI, transformFormDataToRequest } from "@/api/startup";
 
 const seoulDistricts = [
   "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구",
@@ -31,58 +32,31 @@ const industryCategoryOptions = [
 
 export default function SelectionSummary() {
   const navigate = useNavigate();
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, setReportData } = useFormContext();
   const { toast } = useToast();
   
   const [editMode, setEditMode] = useState<string | null>(null);
   const [tempData, setTempData] = useState(formData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // formData를 백엔드 요청 형식으로 변환
-  const transformDataToRequest = () => {
-    return {
-      personalInfo: {
-        name: "Gildong Hong", // 이름 필드가 없으므로 기본값 사용 (필요시 formData에서 가져오도록 수정 가능)
-        gender: formData.gender === "M" ? "m" : formData.gender === "F" ? "f" : "m", // 기본값 "m"
-        age: parseInt(formData.age) || 30, // string을 number로 변환
-        mbti: formData.mbti && formData.mbti !== "none" ? formData.mbti : "ISTJ", // 기본값 "ISTJ"
-        previous_job: formData.previousOccupationDetail || "Developer", // 기본값 "Developer"
-        self_employed_experience: formData.hasStartupExperience === "경험 있음" // boolean 변환
-      },
-      projectInfo: {
-        foodSector: formData.industry || formData.industryCategory || "한식", // 업종 상세 또는 대분류
-        region: formData.selectedDistricts[0] || "강남구", // 선택된 구 (첫 번째 값)
-        capital: formData.budgetAmount || 50000000 // 자본금 (기본값 5000만원)
-      }
-    };
-  };
-
   // 백엔드로 데이터 전송
   const sendDataToBackend = async () => {
     try {
       setIsSubmitting(true);
-      const requestData = transformDataToRequest();
+      const requestData = transformFormDataToRequest(formData);
       
-      // 백엔드 API 엔드포인트 (환경에 맞게 수정 필요)
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080/api/submit";
+      console.log("Submitting data to backend:", requestData);
       
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const result = await startupAPI.submitStartupPlan(requestData);
+      
+      console.log("Backend response:", result);
+      
+      // Store the report data in context
+      setReportData(result);
       
       toast({
-        title: "전송 완료",
-        description: "정보가 성공적으로 전송되었습니다.",
+        title: "분석 완료",
+        description: "창업 컨설팅 분석이 완료되었습니다.",
       });
       
       return result;
